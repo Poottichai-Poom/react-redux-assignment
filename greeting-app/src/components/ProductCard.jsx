@@ -1,5 +1,5 @@
 import RatingStars from "../RatingStars"
-function ProductCard({ name, price, rating, reviews, inStock, category, image }) {
+function ProductCard({ name, price, rating, reviews, inStock, category, image ,Description}) {
     function handleAddToCart() {
         if (inStock) { alert(`Added "${name}" to cart! Price: $${price.toFixed(2)}`); }
     }
@@ -11,9 +11,11 @@ function ProductCard({ name, price, rating, reviews, inStock, category, image })
             <img src={image} alt={name} className="product-img" />
             <span className="category">{category}</span>
             <h3>{name}</h3>
+            <p>{Description}</p>
             <RatingStars rating={rating} reviews={reviews} />
             <div className="card-footer">
                 <strong className="price">${price.toFixed(2)}</strong>
+                <s className="price">${(price * 2).toFixed(2)}</s>
                 <button onClick={handleAddToCart} disabled={!inStock} className="add-btn">
                     {inStock ? "Add to Cart" : "Unavailable"}
                 </button>
