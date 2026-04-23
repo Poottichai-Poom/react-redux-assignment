@@ -1,6 +1,6 @@
 import "./App.css";
 import products from "./data/products";
-import ProductCard from "./components/productCard";
+import ProductCard from "./components/ProductCard";
 function App() {
   const availableCount = products.filter(p => p.inStock).length;
   return (

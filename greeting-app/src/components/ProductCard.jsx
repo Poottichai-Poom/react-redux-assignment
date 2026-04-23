@@ -11,7 +11,7 @@ function ProductCard({ name, price, rating, reviews, inStock, category, image ,D
             <img src={image} alt={name} className="product-img" />
             <span className="category">{category}</span>
             <h3>{name}</h3>
-            <p>{Description}</p>
+            <p className="description">{Description}</p>
             <RatingStars rating={rating} reviews={reviews} />
             <div className="card-footer">
                 <strong className="price">${price.toFixed(2)}</strong>

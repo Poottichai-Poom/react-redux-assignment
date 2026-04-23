@@ -120,3 +120,8 @@ h3 {
 .add-btn:hover:not(:disabled) {
   background: #005fa3;
 }
+.description {
+  font-size: 13px;
+  color: #555;
+  margin: 10px 0;
+}
