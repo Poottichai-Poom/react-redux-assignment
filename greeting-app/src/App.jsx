@@ -11,7 +11,6 @@ function App() {
       </header>
       <div className="gallery-grid">
         {products.map(product => (
-          // TODO: Insert ProductCard component here, passing product data as props
           <ProductCard {...product} />
         ))}
       </div>

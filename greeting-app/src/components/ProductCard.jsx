@@ -11,7 +11,6 @@ function ProductCard({ name, price, rating, reviews, inStock, category, image })
             <img src={image} alt={name} className="product-img" />
             <span className="category">{category}</span>
             <h3>{name}</h3>
-// TODO: Insert RatingStars component here, passing rating and reviews as props
             <RatingStars rating={rating} reviews={reviews} />
             <div className="card-footer">
                 <strong className="price">${price.toFixed(2)}</strong>
