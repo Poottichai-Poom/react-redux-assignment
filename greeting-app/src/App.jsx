@@ -1,30 +1,21 @@
-import { useState } from 'react'
-import Greeting from './Greeting.jsx'
-import './App.css'
-
-const tips = [
-  'Take one small action before aiming for perfect results.',
-  'Focus on progress, not pressure.',
-  'Pause, breathe, and restart with clarity when stuck.',
-  'Protect your energy by finishing one task at a time.',
-]
-
+import "./App.css";
+import products from "./data/products";
+import ProductCard from "./components/productCard";
 function App() {
+  const availableCount = products.filter(p => p.inStock).length;
   return (
-    <main>
-      <section className="card">
-        <Greeting name ="Poom"></Greeting>
-        <div className="tips-block">
-          <h2>Motivational Tips</h2>
-          <ul className="tips-list">
-            {tips.map((tip, index) => (
-              <li key={index}>{tip}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    </main>
-  )
+    <div className="app">
+      <header className="app-header">
+        <h1>Tech Shop</h1>
+        <p>{products.length} products | {availableCount} available</p>
+      </header>
+      <div className="gallery-grid">
+        {products.map(product => (
+          // TODO: Insert ProductCard component here, passing product data as props
+          <ProductCard {...product} />
+        ))}
+      </div>
+    </div>
+  );
 }
-
-export default App
+export default App;
