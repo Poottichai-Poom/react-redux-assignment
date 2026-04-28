@@ -1,54 +1,113 @@
-import { useState } from 'react';
-import TaskInput from './components/TaskInput';
-import TaskItem from './components/TaskItem';
-import './App.css'
-
-const initialTasks = [
-  { id: 1, text: 'Complete React Session 3', completed: true },
-  { id: 2, text: 'Read React docs', completed: false },
-  { id: 3, text: 'Read React documentation', completed: false },
-];
-let nextId = 4;
+import { useState, useMemo } from 'react';
+import useFetch from './hooks/useFetch';
+import CountryCard from './components/CountryCard';
+import CountryModal from './components/CountryModal';
+import RegionFilter from './components/RegionFilter';
+import SearchBar from './components/SearchBar';
+import './App.css';
+const API =
+  'https://restcountries.com/v3.1/all?fields=name,capital,population,region,flags,languages';
 function App() {
-  const [tasks, setTasks] = useState(initialTasks);
-  const [filter, setFilter] = useState('all');
-  function handleAddTask(text) {
-    setTasks([...tasks, { id: nextId++, text, completed: false }]);
+  const { data: countries, loading, error } = useFetch(API);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('All');
+  const [sortBy, setSortBy] = useState('name');
+  const [favourites, setFavourites] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const regions =
+    ['All', 'Africa', 'Americas', 'Asia', 'Europe', 'Oceania'];
+  const regionCounts = useMemo(() => {
+    const counts = { All: countries?.length || 0 };
+    regions.slice(1).forEach(region => {
+      counts[region] = (countries || []).filter(c => c.region === region).length;
+    });
+    return counts;
+  }, [countries]);
+  const filtered = (countries || []).filter(c =>
+    c.name.common.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (selectedRegion === 'All' || c.region === selectedRegion)
+  );
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      if (sortBy === 'population') return a.population - b.population;
+      return a.name.common.localeCompare(b.name.common);
+    });
+  }, [filtered, sortBy]);
+  function handleToggleFavourite(country) {
+    setFavourites(prev => {
+      const name = country.name.common;
+      return prev.includes(name)
+        ? prev.filter(item => item !== name)
+        : [...prev, name];
+    });
   }
-
-  function handleToggle(id) {
-    setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  function handleOpenCountry(country) {
+    setSelectedCountry(country);
   }
-  function handleDelete(id) {
-    setTasks(tasks.filter(t => t.id !== id));
+  function handleCloseModal() {
+    setSelectedCountry(null);
   }
-  function handleEdit(id) {
-    const newText = prompt("Edit task:");
-    if (newText) {
-      setTasks(tasks.map(t => t.id === id ? { ...t, text: newText } : t));
-    }
-  }
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "active") return !task.completed;
-    if (filter === "completed") return task.completed;
-    return true; // "all"
-  });
-  // ... render JSX (filter buttons + TaskInput + filtered.map(TaskItem))
-  return (<div className="app">
-    <h1>Todo List</h1>
-    <TaskInput onAddTask={handleAddTask} />
-    <div className="filters">
-      <button onClick={() => setFilter('all')} className={filter === 'all' ? 'active' : ''}>All</button>
-      <button onClick={() => setFilter('active')} className={filter === 'active' ? 'active' : ''}>Active</button>
-      <button onClick={() => setFilter('completed')} className={filter === 'completed' ? 'active' : ''}>Completed</button>
+  if (loading) return (
+    <div className='app'>
+      <div className='app-header'>
+        <h1>Country Explorer</h1>
+        <p>Search, sort and explore countries around the world.</p>
+      </div>
+      <div className='skeleton-grid'>
+        {Array.from({ length: 8 }).map((_, index) => (
+          <div key={index} className='country-card skeleton'>
+            <div className='country-flag skeleton-block' />
+            <div className='country-info'>
+              <div className='skeleton-line short' />
+              <div className='skeleton-line' />
+              <div className='skeleton-line' />
+              <div className='skeleton-line' />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-    <ul className="task-list">
-      {filteredTasks.map(task => (
-        <TaskItem key={task.id} task={task} onChange={handleEdit} onToggle={handleToggle} onDelete={handleDelete} />
-      ))}
-    </ul>
-  </div>);
+  );
+  if (error) return <p>Error: {error}</p>;
+  return (
+    <div className='app'>
+      <SearchBar onSearch={setSearchTerm} searchTerm={searchTerm} />
+      <div className='toolbar'>
+        <RegionFilter
+          selectedRegion={selectedRegion}
+          onRegionChange={setSelectedRegion}
+          counts={regionCounts}
+        />
+        <div className='sort-select'>
+          <label htmlFor='sort'>Sort by:</label>
+          <select id='sort' value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value='name'>Name</option>
+            <option value='population'>Population</option>
+          </select>
+        </div>
+      </div>
+      <p>Showing {filtered.length} of {countries.length} countries</p>
+      <div className='country-grid'>
+        {sorted.map(c => (
+          <CountryCard
+            key={c.name.common}
+            country={c}
+            isFavourite={favourites.includes(c.name.common)}
+            onToggleFavourite={() => handleToggleFavourite(c)}
+            onSelect={() => handleOpenCountry(c)}
+          />
+        ))}
 
+      </div>
+      {selectedCountry && (
+        <CountryModal
+          country={selectedCountry}
+          onClose={handleCloseModal}
+          isFavourite={favourites.includes(selectedCountry.name.common)}
+          onToggleFavourite={() => handleToggleFavourite(selectedCountry)}
+        />
+      )}
+    </div>
+  );
 }
-
 export default App;
