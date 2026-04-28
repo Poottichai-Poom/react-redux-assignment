@@ -1,122 +1,28 @@
-/* App.css */
-.app {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+body {
+  background: #f0f4f8;
 }
 
-.app-header {
-  background: #0077cc;
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-
-  margin-bottom: 25px;
-}
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
-}
-
-.product-card {
+.todo-card {
   background: white;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-  position: relative;
-  transition: transform 0.2s;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  margin: 40px auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.product-card:hover {
-  transform: translateY(-4px);
-}
-
-.unavailable {
-  opacity: 0.65;
-}
-
-.badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 3px 8px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.badge-green {
-  background: #d4edda;
-  color: #155724;
-}
-
-.badge-red {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.product-img {
-  width: 100%;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-
-.category {
-  font-size: 11px;
-  color: #0077cc;
-  font-weight: bold;
-
-  text-transform: uppercase;
-}
-
-h3 {
-  margin: 8px 0;
-  font-size: 15px;
-}
-
-.rating {
-  color: #f5a623;
-  font-size: 13px;
-  margin: 5px 0;
-}
-
-.review-count {
-  color: #888;
-  font-size: 11px;
-  margin-left: 5px;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.price {
-  font-size: 18px;
+h1 {
+  text-align: center;
   color: #0077cc;
 }
 
-.add-btn {
-  background: #0077cc;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
+.task-item.completed span {
+  text-decoration: line-through;
+  color: #aaa;
 }
 
-.add-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.add-btn:hover:not(:disabled) {
-  background: #005fa3;
+.filter-btn.active-filter {
+  border-color: #0077cc;
+  color: #0077cc;
+  font-weight: bold;
 }
