@@ -1,16 +1,48 @@
-# React + Vite
+ # Expense Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ A React + Vite expense tracker with:
 
-Currently, two official plugins are available:
+ - Dark / light theme support using CSS Modules and CSS variables
+ - Monthly budget tracking with percentage used
+ - Export expenses as CSV
+ - Live OpenWeather forecast for today
+ - Dedicated staging branch for preview deployments
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+ ## Features
 
-## React Compiler
+ - Theme toggle with persisted user preference
+ - Weather widget using OpenWeather API
+ - Budget progress bar and alerts for high spending
+ - Export all expenses to a CSV file
+ - Staging branch supports separate Vercel preview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+ ## Setup
 
-## Expanding the ESLint configuration
+ 1. Copy `.env.example` to `.env` at the project root
+ 2. Add your OpenWeather API key using `REACT_APP_OPENWEATHER_KEY`
+ 3. (Optional) set `REACT_APP_OPENWEATHER_CITY` for the fallback location
+ 4. Run:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+## Environment variables
+
+```bash
+REACT_APP_OPENWEATHER_KEY=your-openweather-api-key
+REACT_APP_OPENWEATHER_CITY=Bangkok
+VITE_APP_APP_TITLE=My Expense Tracker
+VITE_APP_VERSION=1.0.0
+```
+
+## Preview
+
+![Live expense tracker screenshot](./screenshot.svg)
+
+## Notes
+
+ - The app will load a weather forecast from the OpenWeather API.
+ - Theme selection is saved to `localStorage`.
+ - A staging branch is used to generate an isolated Vercel preview URL when the repo is connected to Vercel.

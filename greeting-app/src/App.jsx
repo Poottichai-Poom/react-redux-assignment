@@ -2,15 +2,16 @@ import { ExpenseProvider } from './context/ExpenseContext';
 import ExpenseSummary from './components/ExpenseSummary';
 import AddExpenseForm from './components/AddExpenseForm';
 import ExpenseList from './components/ExpenseList';
-import './App.css';
+import style from './App.module.css';
 function App() {
+  const title = import.meta.env.VITE_APP_APP_TITLE || 'Expense Tracker';
   return (
     <ExpenseProvider>
-      <div className='app'>
+      <div className={style.app}>
         <header>
-          <h1> Expense Tracker</h1>
+          <h1>{title}</h1>
         </header>
-        <div className='main-layout'>
+        <div className={style['main-layout']}>
           <aside>
             <ExpenseSummary />
           </aside>
