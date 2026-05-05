@@ -1,8 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 const EMPTY_FORM = { name: '', studentId: '', major: '', gpa: '' };
-function AddStudentForm({ onAddStudent }) {
+function AddStudentForm({ editingStudent, onAddStudent, onSaveStudent, onCancelEdit }) {
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [error, setError] = useState('');
+    useEffect(() => {
+        if (editingStudent) {
+            setFormData({
+                name: editingStudent.name,
+                studentId: editingStudent.studentId,
+                major: editingStudent.major,
+                gpa: editingStudent.gpa.toString(),
+            });
+        } else {
+            setFormData(EMPTY_FORM);
+        }
+    }, [editingStudent]);
     // Single handler for ALL inputs via computed property name
     function handleChange(e) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,19 +31,24 @@ function AddStudentForm({ onAddStudent }) {
             setError('GPA must be a number between 0.0 and 4.0.');
             return;
         }
-        onAddStudent({
+        const studentPayload = {
             id: Date.now(), // Temporary ID — Session 4 uses API-generated IDs
             name: formData.name.trim(),
             studentId: formData.studentId.trim(),
             major: formData.major.trim() || 'Undeclared',
             gpa: gpaNum,
-        });
+        };
+        if (editingStudent) {
+            onSaveStudent({ ...studentPayload, id: editingStudent.id });
+        } else {
+            onAddStudent(studentPayload);
+        }
         setFormData(EMPTY_FORM); // Reset form after successful submit
         setError('');
     }
     return (
         <form className="add-form" onSubmit={handleSubmit}>
-            <h3>Add New Student</h3>
+            <h3>{editingStudent ? 'Edit Student' : 'Add New Student'}</h3>
             {error && <p className="form-error">{error}</p>}
             <div className="form-row">
                 <input name="name" placeholder="Full Name *" value={formData.name} onChange={handleChange} />
@@ -39,8 +56,17 @@ function AddStudentForm({ onAddStudent }) {
                 <input name="major" placeholder="Major" value={formData.major} onChange={handleChange} />
                 <input name="gpa" placeholder="GPA (0.0–4.0)" value={formData.gpa} onChange={handleChange}
                     type="number" step="0.01" min="0" max="4" />
-                <button type="submit" className="btn-primary">+ Add Student</button>
+                <button type="submit" className="btn-primary">
+                    {editingStudent ? 'Save Student' : '+ Add Student'}
+                </button>
             </div>
+            {editingStudent && (
+                <div className="form-row form-actions">
+                    <button type="button" className="btn-secondary" onClick={onCancelEdit}>
+                        Cancel Edit
+                    </button>
+                </div>
+            )}
         </form>);
 }
 export default AddStudentForm;

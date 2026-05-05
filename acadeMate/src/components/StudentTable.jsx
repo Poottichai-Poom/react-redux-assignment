@@ -1,4 +1,4 @@
-function StudentTable({ students }) {
+function StudentTable({ students, onEditStudent, onDeleteStudent }) {
     if (students.length === 0) {
         return <p className="empty-state">No students yet. Add one above!</p>;
     }
@@ -11,6 +11,7 @@ function StudentTable({ students }) {
                     <th>Student ID</th>
                     <th>Major</th>
                     <th>GPA</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,6 +22,14 @@ function StudentTable({ students }) {
                         <td>{student.studentId}</td>
                         <td>{student.major}</td>
                         <td className="gpa-cell">{student.gpa.toFixed(2)}</td>
+                        <td className="action-cell">
+                            <button type="button" className="btn-secondary" onClick={() => onEditStudent?.(student)}>
+                                Edit
+                            </button>
+                            <button type="button" className="btn-danger" onClick={() => onDeleteStudent?.(student.id)}>
+                                Delete
+                            </button>
+                        </td>
                     </tr>
                 ))}
             </tbody>
