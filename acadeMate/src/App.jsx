@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './App.css';
 import GpaSummary from './components/GpaSummary.jsx';
 import AddStudentForm from './components/AddStudentForm.jsx';
 import StudentTable from './components/StudentTable.jsx';
