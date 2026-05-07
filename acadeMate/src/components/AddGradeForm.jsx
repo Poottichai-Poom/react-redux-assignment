@@ -1,8 +1,15 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllStudents } from '../features/students/studentsSlice';
+import { selectAllCourses } from '../features/courses/coursesSlice';
+import { addGrade } from '../features/grades/gradesSlice';
 
 const EMPTY_FORM = { studentId: '', courseId: '', grade: '', semester: '' };
 
-function AddGradeForm({ students, courses, onAddGrade }) {
+function AddGradeForm() {
+    const dispatch = useDispatch();
+    const students = useSelector(selectAllStudents);
+    const courses = useSelector(selectAllCourses);
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [error, setError] = useState('');
 
@@ -21,12 +28,12 @@ function AddGradeForm({ students, courses, onAddGrade }) {
             setError('Grade must be a number between 0.0 and 4.0.');
             return;
         }
-        onAddGrade({
+        dispatch(addGrade({
             studentId: Number(formData.studentId),
             courseId: Number(formData.courseId),
             grade: gradeValue,
             semester: formData.semester.trim() || '2024-1',
-        });
+        }));
         setFormData(EMPTY_FORM);
         setError('');
     };

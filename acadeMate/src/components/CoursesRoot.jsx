@@ -1,12 +1,11 @@
-import React from 'react';
 import AddCourseForm from './AddCourseForm';
 import CourseList from './CourseList';
 
-function CoursesRoot({ courses, onAddCourse, onDeleteCourse }) {
+function CoursesRoot() {
   return (
     <div className="courses-root">
-      <AddCourseForm onAddCourse={onAddCourse} />
-      <CourseList courses={courses} onDeleteCourse={onDeleteCourse} />
+      <AddCourseForm />
+      <CourseList />
     </div>
   );
 }

@@ -1,72 +1,55 @@
-import { useState, useEffect } from 'react';
-const EMPTY_FORM = { name: '', studentId: '', major: '', gpa: '' };
-function AddStudentForm({ editingStudent, onAddStudent, onSaveStudent, onCancelEdit }) {
-    const [formData, setFormData] = useState(EMPTY_FORM);
-    const [error, setError] = useState('');
-    useEffect(() => {
-        if (editingStudent) {
-            setFormData({
-                name: editingStudent.name,
-                studentId: editingStudent.studentId,
-                major: editingStudent.major,
-                gpa: editingStudent.gpa.toString(),
-            });
-        } else {
-            setFormData(EMPTY_FORM);
-        }
-    }, [editingStudent]);
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addStudent } from "../features/students/studentsSlice";
+const EMPTY_FORM = { name: "", studentId: "", major: "", gpa: "" };
+function AddStudentForm() {
+    const dispatch = useDispatch();
+    const [form, setForm] = useState(EMPTY_FORM);
+    const [error, setError] = useState("");
     // Single handler for ALL inputs via computed property name
     function handleChange(e) {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        // setForm({ ...form, [e.target.name]: e.target.value });
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
     function handleSubmit(e) {
         e.preventDefault();
-        // Validation
-        if (!formData.name.trim() || !formData.studentId.trim()) {
-            setError('Name and Student ID are required.');
+        if (!form.name.trim() || !form.studentId.trim()) {
+            setError("Name and Student ID are required.");
             return;
         }
-        const gpaNum = parseFloat(formData.gpa);
+        const gpaNum = parseFloat(form.gpa);
         if (isNaN(gpaNum) || gpaNum < 0 || gpaNum > 4.0) {
-            setError('GPA must be a number between 0.0 and 4.0.');
+            setError("GPA must be a number between 0.0 and 4.0.");
             return;
         }
-        const studentPayload = {
-            id: Date.now(), // Temporary ID — Session 4 uses API-generated IDs
-            name: formData.name.trim(),
-            studentId: formData.studentId.trim(),
-            major: formData.major.trim() || 'Undeclared',
+        dispatch(addStudent({
+            id: Date.now(),
+            name: form.name.trim(),
+            studentId: form.studentId.trim(),
+            major: form.major.trim() || "Undeclared",
             gpa: gpaNum,
-        };
-        if (editingStudent) {
-            onSaveStudent({ ...studentPayload, id: editingStudent.id });
-        } else {
-            onAddStudent(studentPayload);
-        }
-        setFormData(EMPTY_FORM); // Reset form after successful submit
-        setError('');
+        }));
+        setForm(EMPTY_FORM);
+        setError("");
     }
     return (
         <form className="add-form" onSubmit={handleSubmit}>
-            <h3>{editingStudent ? 'Edit Student' : 'Add New Student'}</h3>
+            <h3>Add New Student</h3>
             {error && <p className="form-error">{error}</p>}
             <div className="form-row">
-                <input name="name" placeholder="Full Name *" value={formData.name} onChange={handleChange} />
-                <input name="studentId" placeholder="Student ID *" value={formData.studentId} onChange={handleChange} />
-                <input name="major" placeholder="Major" value={formData.major} onChange={handleChange} />
-                <input name="gpa" placeholder="GPA (0.0–4.0)" value={formData.gpa} onChange={handleChange}
-                    type="number" step="0.01" min="0" max="4" />
+                <input name="name" value={form.name} onChange={handleChange} placeholder="Full Name" required />
+                <input name="studentId" placeholder="Student ID *" value={form.studentId} onChange={handleChange} required />
+                <input name="major" placeholder="Major" value={form.major} onChange={handleChange} />
+                <input name="gpa" placeholder="GPA (0.0–4.0)" value={form.gpa} onChange={handleChange} type="number"
+                    step="0.01"
+                    min="0"
+                    max="4"
+                />
                 <button type="submit" className="btn-primary">
-                    {editingStudent ? 'Save Student' : '+ Add Student'}
+                    + Add Student
                 </button>
             </div>
-            {editingStudent && (
-                <div className="form-row form-actions">
-                    <button type="button" className="btn-secondary" onClick={onCancelEdit}>
-                        Cancel Edit
-                    </button>
-                </div>
-            )}
-        </form>);
+        </form>
+    );
 }
 export default AddStudentForm;

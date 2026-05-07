@@ -1,7 +1,11 @@
+import { useSelector } from 'react-redux';
+import { selectAllGrades } from '../features/grades/gradesSlice';
 import AddGradeForm from './AddGradeForm';
 import GradeList from './GradeList';
 
-function GradesRoot({ students, courses, grades, onAddGrade, onDeleteGrade }) {
+function GradesRoot() {
+    const grades = useSelector(selectAllGrades);
+
     const calculateAverage = () => {
         if (grades.length === 0) return 0;
         return (grades.reduce((sum, grade) => sum + grade.grade, 0) / grades.length).toFixed(2);
@@ -19,8 +23,8 @@ function GradesRoot({ students, courses, grades, onAddGrade, onDeleteGrade }) {
                     <span className="stat-value">{calculateAverage()}</span>
                 </div>
             </section>
-            <AddGradeForm students={students} courses={courses} onAddGrade={onAddGrade} />
-            <GradeList grades={grades} students={students} courses={courses} onDeleteGrade={onDeleteGrade} />
+            <AddGradeForm />
+            <GradeList />
         </div>
     );
 }

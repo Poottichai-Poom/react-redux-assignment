@@ -1,31 +1,13 @@
-import React from 'react';
 import GpaSummary from './GpaSummary';
 import AddStudentForm from './AddStudentForm';
 import StudentTable from './StudentTable';
 
-function StudentRoot({
-  students,
-  editingStudent,
-  onAddStudent,
-  onSaveStudent,
-  onCancelEdit,
-  onEditStudent,
-  onDeleteStudent,
-}) {
+function StudentRoot() {
   return (
     <div className="students-root">
-      <GpaSummary students={students} />
-      <AddStudentForm
-        editingStudent={editingStudent}
-        onAddStudent={onAddStudent}
-        onSaveStudent={onSaveStudent}
-        onCancelEdit={onCancelEdit}
-      />
-      <StudentTable
-        students={students}
-        onEditStudent={onEditStudent}
-        onDeleteStudent={onDeleteStudent}
-      />
+      <GpaSummary />
+      <AddStudentForm />
+      <StudentTable />
     </div>
   );
 }

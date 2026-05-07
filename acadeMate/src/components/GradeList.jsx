@@ -1,4 +1,14 @@
-function GradeList({ grades, students, courses, onDeleteGrade }) {
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllGrades, deleteGrade } from '../features/grades/gradesSlice';
+import { selectAllStudents } from '../features/students/studentsSlice';
+import { selectAllCourses } from '../features/courses/coursesSlice';
+
+function GradeList() {
+    const dispatch = useDispatch();
+    const grades = useSelector(selectAllGrades);
+    const students = useSelector(selectAllStudents);
+    const courses = useSelector(selectAllCourses);
+
     if (grades.length === 0) {
         return <p className="empty-state">No grades recorded yet. Add one above!</p>;
     }
@@ -29,7 +39,7 @@ function GradeList({ grades, students, courses, onDeleteGrade }) {
                             <td>{grade.grade.toFixed(2)}</td>
                             <td>{grade.semester}</td>
                             <td>
-                                <button type="button" className="btn-action delete" onClick={() => onDeleteGrade?.(grade.id)}>
+                                <button type="button" className="btn-action delete" onClick={() => dispatch(deleteGrade(grade.id))}>
                                     Delete
                                 </button>
                             </td>

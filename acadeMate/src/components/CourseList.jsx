@@ -1,6 +1,10 @@
-import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllCourses, deleteCourse } from '../features/courses/coursesSlice';
 
-function CourseList({ courses, onDeleteCourse }) {
+function CourseList() {
+    const dispatch = useDispatch();
+    const courses = useSelector(selectAllCourses);
+
     if (courses.length === 0) {
         return <p className="empty-state">No courses available. Add one above!</p>;
     }
@@ -29,7 +33,7 @@ function CourseList({ courses, onDeleteCourse }) {
                             <td>{course.credits}</td>
                             <td>{course.dept}</td>
                             <td>
-                                <button type="button" className="btn-action delete" onClick={() => onDeleteCourse?.(course.id)}>
+                                <button type="button" className="btn-action delete" onClick={() => dispatch(deleteCourse(course.id))}>
                                     Delete
                                 </button>
                             </td>

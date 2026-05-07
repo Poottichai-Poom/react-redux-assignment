@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addCourse } from '../features/courses/coursesSlice';
 
 const EMPTY_FORM = { code: '', title: '', credits: '', dept: '' };
 
-function AddCourseForm({ onAddCourse }) {
+function AddCourseForm() {
+    const dispatch = useDispatch();
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [error, setError] = useState('');
 
@@ -22,13 +25,13 @@ function AddCourseForm({ onAddCourse }) {
             return;
         }
 
-        onAddCourse({
+        dispatch(addCourse({
             id: Date.now(),
             code: formData.code.trim().toUpperCase(),
             title: formData.title.trim(),
             credits: creditsNum,
             dept: formData.dept.trim() || 'General',
-        });
+        }));
 
         setFormData(EMPTY_FORM);
         setError('');
