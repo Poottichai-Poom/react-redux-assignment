@@ -1,6 +1,7 @@
 export const selectAllStudents = (state) => state.students.list;
 // Select total count
 export const selectStudentCount = (state) => state.students.list.length;
+export const selectStudentsStatus = (state) => state.students.status;
 // ── Derived / computed selectors ─────────────────────────
 // Compute average GPA across all students
 export const selectAverageGpa = (state) => {

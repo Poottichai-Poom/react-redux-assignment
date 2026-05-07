@@ -1,26 +1,20 @@
 import { useSelector } from "react-redux";
-import { selectAllStudents } from "../features/students/studentsSlice";
+import { selectStudentCount, selectAverageGpa, selectHighAchievers } from "../features/students/selectors";
 
 function GpaSummary() {
-    const students = useSelector(selectAllStudents);
-    const count = students.length;
-    const avgGpa = students.length > 0 ? (students.reduce((sum, s) => sum + s.gpa, 0) / students.length).toFixed(2) : "0.00";
-    const highAchievers = students.filter(s => s.gpa >= 3.5).length;
-
+    const stats = [
+        { label: "Total Students", value: useSelector(selectStudentCount) },
+        { label: "Average GPA", value: useSelector(selectAverageGpa) },
+        { label: "High Achievers (≥3.5)", value: useSelector(selectHighAchievers).length }
+    ];
     return (
         <div className="gpa-summary">
-            <div className="stat-card">
-                <span className="stat-value">{count}</span>
-                <span className="stat-label">Total Students</span>
-            </div>
-            <div className="stat-card">
-                <span className="stat-value">{avgGpa}</span>
-                <span className="stat-label">Average GPA</span>
-            </div>
-            <div className="stat-card">
-                <span className="stat-value">{highAchievers}</span>
-                <span className="stat-label">High Achievers (≥3.5)</span>
-            </div>
+            {stats.map(s => (
+                <div key={s.label} className="stat-card">
+                    <span className="stat-value">{s.value}</span>
+                    <span className="stat-label">{s.label}</span>
+                </div>
+            ))}
         </div>
     );
 }

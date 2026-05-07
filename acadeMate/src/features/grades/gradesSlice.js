@@ -26,4 +26,10 @@ const gradesSlice = createSlice({
 export const { addGrade, updateGrade, deleteGrade } =
     gradesSlice.actions;
 export const selectAllGrades = (state) => state.grades.list;
+export const selectGradeStats = (state) => {
+    const list = state.grades.list;
+    const count = list.length;
+    const average = count === 0 ? "0.00" : (list.reduce((sum, g) => sum + g.grade, 0) / count).toFixed(2);
+    return { count, average };
+};
 export default gradesSlice.reducer;

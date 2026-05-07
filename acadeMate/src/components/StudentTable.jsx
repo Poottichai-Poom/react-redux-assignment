@@ -1,41 +1,38 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteStudent, updateStudent } from "../features/students/studentsSlice";
-import { selectAllStudents } from "../features/students/selectors";
+import { deleteStudentAsync, updateStudentAsync } from "../features/students/studentsThunks";
+import { selectAllStudents, selectStudentsStatus } from "../features/students/selectors";
 import EditModal from "./EditModal";
+
 function StudentTable() {
     const dispatch = useDispatch();
+    const [editing, setEditing] = useState(null);
     const students = useSelector(selectAllStudents);
-    // Local UI state — modal open/close and which student is being edited
-    const [editing, setEditing] = useState(null); // null = modal closed
-    function handleDelete(id) {
-        if (window.confirm("Delete this student?")) {
-            dispatch(deleteStudent(id));
-        }
-    }
-    function handleEditSave(updatedData) {
-        dispatch(updateStudent({ ...updatedData, gpa: parseFloat(updatedData.gpa) || 0 }));
-        setEditing(null); // Close modal after update
-    }
+    const status = useSelector(selectStudentsStatus);
+
+    if (status !== "succeeded") return <p>Loading students...</p>;
+
+    const handleDelete = (id) => window.confirm("Delete?") && dispatch(deleteStudentAsync(id));
+    const handleSave = (data) => { dispatch(updateStudentAsync({ ...data, gpa: parseFloat(data.gpa) || 0 })); setEditing(null); };
+
     return (
         <>
             <table className="student-table">
-                <thead><tr><th>#</th><th>Name</th><th>Student ID</th><th>Major</th><th>GPA</th><th>Actions</th></tr></thead>
+                <thead><tr>{['#','Name','ID','Major','GPA','Actions'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                 <tbody>
-                    {students.map((student, index) => (
-                        <tr key={student.id} className={student.gpa >= 3.5 ? "high-gpa" : ""}>
-                            <td>{index + 1}</td><td>{student.name}</td><td>{student.studentId}</td><td>{student.major}</td>
-                            <td className="gpa-cell">{student.gpa.toFixed(2)}</td>
+                    {students.map((s, i) => (
+                        <tr key={s.id} className={s.gpa >= 3.5 ? "high-gpa" : ""}>
+                            <td>{i + 1}</td><td>{s.name}</td><td>{s.studentId}</td><td>{s.major}</td>
+                            <td>{s.gpa.toFixed(2)}</td>
                             <td>
-                                <button onClick={() => setEditing(student)}>Edit</button>
-                                <button onClick={() => handleDelete(student.id)}>Delete</button>
+                                <button onClick={() => setEditing(s)}>Edit</button>
+                                <button onClick={() => handleDelete(s.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {editing && (<EditModal student={editing} onSave={handleEditSave} onCancel={() => setEditing(null)} />
-            )}
+            {editing && <EditModal student={editing} onSave={handleSave} onCancel={() => setEditing(null)} />}
         </>
     );
 }
