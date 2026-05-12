@@ -44,7 +44,6 @@ function App() {
         </div>
         {activeRoot === 'students' ? (
           <StudentRoot
-            students={students}
             editingStudent={editingStudent}
             onAddStudent={(formData) => {
               const newStudent = { ...formData, id: Date.now() };

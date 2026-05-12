@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
+
 // Hard-coded initial data — Session 4 replaces this with API data
 const INITIAL_STUDENTS = [
     { id: 1, name: 'Somchai Rakpong', studentId: '6501001', major: 'Computer Science', gpa: 3.85 },
@@ -7,28 +8,44 @@ const INITIAL_STUDENTS = [
     { id: 4, name: 'Malee Jaikaew', studentId: '6501004', major: 'Business IT', gpa: 3.40 },
     { id: 5, name: 'Pong Srisuk', studentId: '6501005', major: 'Information Technology', gpa: 3.75 },
 ];
+
+const studentsAdapter = createEntityAdapter();
+
+const initialState = studentsAdapter.getInitialState({
+    status: 'idle', // 'idle'|'loading'|'succeeded'|'failed'
+    error: null,
+});
+
+// Pre-populate with initial data
+const prePopulatedState = studentsAdapter.setAll(initialState, INITIAL_STUDENTS);
+
 const studentsSlice = createSlice({
     name: 'students',
-    initialState: {
-        list: INITIAL_STUDENTS, // Pre-populated — no API call needed yet
-        status: 'idle', // 'idle'|'loading'|'succeeded'|'failed'
-        error: null,
-    },
+    initialState: prePopulatedState,
     reducers: {
-        addStudent: (state, action) => {
-            state.list.push(action.payload); // Immer makes .push() safe
-        },
-        deleteStudent: (state, action) => {
-            state.list = state.list.filter(s => s.id !== action.payload);
-        },
+        addStudent: studentsAdapter.addOne,
+        deleteStudent: studentsAdapter.removeOne,
         updateStudent: (state, action) => {
-            const idx = state.list.findIndex(s => s.id === action.payload.id);
-            if (idx !== -1) state.list[idx] = action.payload;
+            studentsAdapter.updateOne(state, { 
+                id: action.payload.id, 
+                changes: action.payload 
+            });
         },
+    },
+    extraReducers: (builder) => {
+        // Keep extraReducers placeholder as requested
     },
 });
+
 // Named exports: action creators — used in components (Session 3)
 export const { addStudent, deleteStudent, updateStudent } = studentsSlice.actions;
+
 // Default export: reducer — imported in store.js
 export default studentsSlice.reducer;
-export const selectAllStudents = state => state.students.list;
+
+// Export selectors from the adapter
+export const {
+    selectAll: selectAllStudents,
+    selectById: selectStudentById,
+    selectIds: selectStudentIds,
+} = studentsAdapter.getSelectors(state => state.students);

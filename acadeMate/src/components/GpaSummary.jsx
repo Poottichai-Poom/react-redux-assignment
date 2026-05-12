@@ -1,4 +1,9 @@
-function GpaSummary({ students }) {
+import { useSelector } from 'react-redux';
+import { selectAllStudents } from '../features/students/studentsSlice';
+
+function GpaSummary() {
+    const students = useSelector(selectAllStudents);
+    
     if (students.length === 0) return null;
     const average = (students.reduce((sum, s) => sum + s.gpa, 0) / students.length).toFixed(2);
     const highest = Math.max(...students.map(s => s.gpa)).toFixed(2);

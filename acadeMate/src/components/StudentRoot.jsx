@@ -4,7 +4,6 @@ import AddStudentForm from './AddStudentForm';
 import StudentTable from './StudentTable';
 
 function StudentRoot({
-  students,
   editingStudent,
   onAddStudent,
   onSaveStudent,
@@ -14,7 +13,7 @@ function StudentRoot({
 }) {
   return (
     <div className="students-root">
-      <GpaSummary students={students} />
+      <GpaSummary />
       <AddStudentForm
         editingStudent={editingStudent}
         onAddStudent={onAddStudent}
@@ -22,7 +21,6 @@ function StudentRoot({
         onCancelEdit={onCancelEdit}
       />
       <StudentTable
-        students={students}
         onEditStudent={onEditStudent}
         onDeleteStudent={onDeleteStudent}
       />
