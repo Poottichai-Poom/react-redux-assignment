@@ -1,16 +1,18 @@
 import { useState } from 'react';
+import { useAddCourseMutation } from '../features/courses/coursesApi';
 
 const EMPTY_FORM = { code: '', title: '', credits: '', dept: '' };
 
-function AddCourseForm({ onAddCourse }) {
+function AddCourseForm() {
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [error, setError] = useState('');
+    const [addCourse] = useAddCourseMutation();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.code.trim() || !formData.title.trim()) {
             setError('Course code and title are required.');
@@ -22,16 +24,19 @@ function AddCourseForm({ onAddCourse }) {
             return;
         }
 
-        onAddCourse({
-            id: Date.now(),
-            code: formData.code.trim().toUpperCase(),
-            title: formData.title.trim(),
-            credits: creditsNum,
-            dept: formData.dept.trim() || 'General',
-        });
+        try {
+            await addCourse({
+                code: formData.code.trim().toUpperCase(),
+                title: formData.title.trim(),
+                credits: creditsNum,
+                dept: formData.dept.trim() || 'General',
+            }).unwrap();
 
-        setFormData(EMPTY_FORM);
-        setError('');
+            setFormData(EMPTY_FORM);
+            setError('');
+        } catch (err) {
+            setError('Failed to add course.');
+        }
     };
 
     return (

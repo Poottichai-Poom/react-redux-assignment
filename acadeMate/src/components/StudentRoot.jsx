@@ -5,8 +5,6 @@ import StudentTable from './StudentTable';
 
 function StudentRoot({
   editingStudent,
-  onAddStudent,
-  onSaveStudent,
   onCancelEdit,
   onEditStudent,
   onDeleteStudent,
@@ -16,8 +14,6 @@ function StudentRoot({
       <GpaSummary />
       <AddStudentForm
         editingStudent={editingStudent}
-        onAddStudent={onAddStudent}
-        onSaveStudent={onSaveStudent}
         onCancelEdit={onCancelEdit}
       />
       <StudentTable

@@ -1,4 +1,15 @@
-function GradeList({ grades, students, courses, onDeleteGrade }) {
+import { useGetGradesQuery, useDeleteGradeMutation } from '../features/grades/gradesApi';
+import { useGetStudentsQuery } from '../features/students/studentsApi';
+import { useGetCoursesQuery } from '../features/courses/coursesApi';
+
+function GradeList() {
+    const { data: grades = [], isLoading } = useGetGradesQuery();
+    const { data: students = [] } = useGetStudentsQuery();
+    const { data: courses = [] } = useGetCoursesQuery();
+    const [deleteGrade] = useDeleteGradeMutation();
+
+    if (isLoading) return <p className="empty-state">Loading grades...</p>;
+
     if (grades.length === 0) {
         return <p className="empty-state">No grades recorded yet. Add one above!</p>;
     }
@@ -29,7 +40,7 @@ function GradeList({ grades, students, courses, onDeleteGrade }) {
                             <td>{grade.grade.toFixed(2)}</td>
                             <td>{grade.semester}</td>
                             <td>
-                                <button type="button" className="btn-action delete" onClick={() => onDeleteGrade?.(grade.id)}>
+                                <button type="button" className="btn-action delete" onClick={() => deleteGrade(grade.id)}>
                                     Delete
                                 </button>
                             </td>

@@ -1,7 +1,10 @@
 import AddGradeForm from './AddGradeForm';
 import GradeList from './GradeList';
+import { useGetGradesQuery } from '../features/grades/gradesApi';
 
-function GradesRoot({ students, courses, grades, onAddGrade, onDeleteGrade }) {
+function GradesRoot() {
+    const { data: grades = [] } = useGetGradesQuery();
+
     const calculateAverage = () => {
         if (grades.length === 0) return 0;
         return (grades.reduce((sum, grade) => sum + grade.grade, 0) / grades.length).toFixed(2);
@@ -19,8 +22,8 @@ function GradesRoot({ students, courses, grades, onAddGrade, onDeleteGrade }) {
                     <span className="stat-value">{calculateAverage()}</span>
                 </div>
             </section>
-            <AddGradeForm students={students} courses={courses} onAddGrade={onAddGrade} />
-            <GradeList grades={grades} students={students} courses={courses} onDeleteGrade={onDeleteGrade} />
+            <AddGradeForm />
+            <GradeList />
         </div>
     );
 }

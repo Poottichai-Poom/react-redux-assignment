@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux';
-import { selectStudentIds, selectStudentById } from '../features/students/studentsSlice';
+import { useGetStudentsQuery } from '../features/students/studentsApi';
 
-function StudentRow({ id, index, onEditStudent, onDeleteStudent }) {
-    const student = useSelector((state) => selectStudentById(state, id));
+function StudentRow({ student, index, onEditStudent, onDeleteStudent }) {
     if (!student) return null;
 
     return (
@@ -25,9 +23,11 @@ function StudentRow({ id, index, onEditStudent, onDeleteStudent }) {
 }
 
 function StudentTable({ onEditStudent, onDeleteStudent }) {
-    const studentIds = useSelector(selectStudentIds);
+    const { data: students = [], isLoading } = useGetStudentsQuery();
 
-    if (studentIds.length === 0) {
+    if (isLoading) return <p className="empty-state">Loading students...</p>;
+
+    if (students.length === 0) {
         return <p className="empty-state">No students yet. Add one above!</p>;
     }
     return (
@@ -43,10 +43,10 @@ function StudentTable({ onEditStudent, onDeleteStudent }) {
                 </tr>
             </thead>
             <tbody>
-                {studentIds.map((id, index) => (
+                {students.map((student, index) => (
                     <StudentRow
-                        key={id}
-                        id={id}
+                        key={student.id}
+                        student={student}
                         index={index}
                         onEditStudent={onEditStudent}
                         onDeleteStudent={onDeleteStudent}

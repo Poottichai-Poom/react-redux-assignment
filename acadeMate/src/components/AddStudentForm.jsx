@@ -1,8 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useAddStudentMutation, useUpdateStudentMutation } from '../features/students/studentsApi';
+
 const EMPTY_FORM = { name: '', studentId: '', major: '', gpa: '' };
-function AddStudentForm({ editingStudent, onAddStudent, onSaveStudent, onCancelEdit }) {
+
+function AddStudentForm({ editingStudent, onCancelEdit }) {
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [error, setError] = useState('');
+    
+    const [addStudent] = useAddStudentMutation();
+    const [updateStudent] = useUpdateStudentMutation();
+
     useEffect(() => {
         if (editingStudent) {
             setFormData({
@@ -15,11 +22,13 @@ function AddStudentForm({ editingStudent, onAddStudent, onSaveStudent, onCancelE
             setFormData(EMPTY_FORM);
         }
     }, [editingStudent]);
+
     // Single handler for ALL inputs via computed property name
     function handleChange(e) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
-    function handleSubmit(e) {
+
+    async function handleSubmit(e) {
         e.preventDefault();
         // Validation
         if (!formData.name.trim() || !formData.studentId.trim()) {
@@ -31,20 +40,26 @@ function AddStudentForm({ editingStudent, onAddStudent, onSaveStudent, onCancelE
             setError('GPA must be a number between 0.0 and 4.0.');
             return;
         }
+
         const studentPayload = {
-            id: Date.now(), // Temporary ID — Session 4 uses API-generated IDs
             name: formData.name.trim(),
             studentId: formData.studentId.trim(),
             major: formData.major.trim() || 'Undeclared',
             gpa: gpaNum,
         };
-        if (editingStudent) {
-            onSaveStudent({ ...studentPayload, id: editingStudent.id });
-        } else {
-            onAddStudent(studentPayload);
+
+        try {
+            if (editingStudent) {
+                await updateStudent({ ...studentPayload, id: editingStudent.id }).unwrap();
+                onCancelEdit?.();
+            } else {
+                await addStudent(studentPayload).unwrap();
+            }
+            setFormData(EMPTY_FORM); // Reset form after successful submit
+            setError('');
+        } catch (err) {
+            setError('Failed to save student. Please try again.');
         }
-        setFormData(EMPTY_FORM); // Reset form after successful submit
-        setError('');
     }
     return (
         <form className="add-form" onSubmit={handleSubmit}>

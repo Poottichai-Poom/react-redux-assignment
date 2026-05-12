@@ -1,6 +1,12 @@
 import React from 'react';
+import { useGetCoursesQuery, useDeleteCourseMutation } from '../features/courses/coursesApi';
 
-function CourseList({ courses, onDeleteCourse }) {
+function CourseList() {
+    const { data: courses = [], isLoading } = useGetCoursesQuery();
+    const [deleteCourse] = useDeleteCourseMutation();
+
+    if (isLoading) return <p className="empty-state">Loading courses...</p>;
+
     if (courses.length === 0) {
         return <p className="empty-state">No courses available. Add one above!</p>;
     }
@@ -29,7 +35,7 @@ function CourseList({ courses, onDeleteCourse }) {
                             <td>{course.credits}</td>
                             <td>{course.dept}</td>
                             <td>
-                                <button type="button" className="btn-action delete" onClick={() => onDeleteCourse?.(course.id)}>
+                                <button type="button" className="btn-action delete" onClick={() => deleteCourse(course.id)}>
                                     Delete
                                 </button>
                             </td>

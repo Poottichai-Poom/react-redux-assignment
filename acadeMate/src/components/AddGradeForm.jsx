@@ -1,16 +1,23 @@
 import { useState } from 'react';
+import { useGetStudentsQuery } from '../features/students/studentsApi';
+import { useGetCoursesQuery } from '../features/courses/coursesApi';
+import { useAddGradeMutation } from '../features/grades/gradesApi';
 
 const EMPTY_FORM = { studentId: '', courseId: '', grade: '', semester: '' };
 
-function AddGradeForm({ students, courses, onAddGrade }) {
+function AddGradeForm() {
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [error, setError] = useState('');
+
+    const { data: students = [] } = useGetStudentsQuery();
+    const { data: courses = [] } = useGetCoursesQuery();
+    const [addGrade] = useAddGradeMutation();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.studentId || !formData.courseId || !formData.grade.trim()) {
             setError('Please select a student, a course, and enter a grade.');
@@ -21,14 +28,20 @@ function AddGradeForm({ students, courses, onAddGrade }) {
             setError('Grade must be a number between 0.0 and 4.0.');
             return;
         }
-        onAddGrade({
-            studentId: Number(formData.studentId),
-            courseId: Number(formData.courseId),
-            grade: gradeValue,
-            semester: formData.semester.trim() || '2024-1',
-        });
-        setFormData(EMPTY_FORM);
-        setError('');
+
+        try {
+            await addGrade({
+                studentId: Number(formData.studentId),
+                courseId: Number(formData.courseId),
+                grade: gradeValue,
+                semester: formData.semester.trim() || '2024-1',
+            }).unwrap();
+
+            setFormData(EMPTY_FORM);
+            setError('');
+        } catch (err) {
+            setError('Failed to add grade.');
+        }
     };
 
     return (

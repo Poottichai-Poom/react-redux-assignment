@@ -3,23 +3,17 @@ import { useState } from 'react';
 import StudentRoot from './components/StudentRoot';
 import CoursesRoot from './components/CoursesRoot';
 import GradesRoot from './components/GradesRoot';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectAllStudents, addStudent, deleteStudent, updateStudent } from './features/students/studentsSlice';
-import { selectAllCourses, addCourse, deleteCourse } from './features/courses/coursesSlice';
-import { selectAllGrades, addGrade, deleteGrade } from './features/grades/gradesSlice';
+import { useDeleteStudentMutation } from './features/students/studentsApi';
 
 function App() {
-  const dispatch = useDispatch();
-  const students = useSelector(selectAllStudents);
-  const courses = useSelector(selectAllCourses);
-  const grades = useSelector(selectAllGrades);
+  const [deleteStudent] = useDeleteStudentMutation();
   const [editingStudent, setEditingStudent] = useState(null);
   const [activeRoot, setActiveRoot] = useState('students');
 
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>AcadeMate — Session 2 Redux Migration</h1>
+        <h1>AcadeMate — RTK Query Migration</h1>
       </header>
       <main className="app-main">
         <div className="root-nav">
@@ -45,32 +39,14 @@ function App() {
         {activeRoot === 'students' ? (
           <StudentRoot
             editingStudent={editingStudent}
-            onAddStudent={(formData) => {
-              const newStudent = { ...formData, id: Date.now() };
-              dispatch(addStudent(newStudent));
-            }}
-            onSaveStudent={(formData) => {
-              dispatch(updateStudent(formData));
-              setEditingStudent(null);
-            }}
             onCancelEdit={() => setEditingStudent(null)}
             onEditStudent={(student) => setEditingStudent(student)}
-            onDeleteStudent={(id) => dispatch(deleteStudent(id))}
+            onDeleteStudent={(id) => deleteStudent(id)}
           />
         ) : activeRoot === 'grades' ? (
-          <GradesRoot
-            students={students}
-            courses={courses}
-            grades={grades}
-            onAddGrade={(gradeData) => dispatch(addGrade(gradeData))}
-            onDeleteGrade={(id) => dispatch(deleteGrade(id))}
-          />
+          <GradesRoot />
         ) : (
-          <CoursesRoot
-            courses={courses}
-            onAddCourse={(courseData) => dispatch(addCourse(courseData))}
-            onDeleteCourse={(id) => dispatch(deleteCourse(id))}
-          />
+          <CoursesRoot />
         )}
       </main>
     </div>

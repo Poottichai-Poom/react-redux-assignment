@@ -1,8 +1,7 @@
-import { useSelector } from 'react-redux';
-import { selectAllStudents } from '../features/students/studentsSlice';
+import { useGetStudentsQuery } from '../features/students/studentsApi';
 
 function GpaSummary() {
-    const students = useSelector(selectAllStudents);
+    const { data: students = [] } = useGetStudentsQuery();
     
     if (students.length === 0) return null;
     const average = (students.reduce((sum, s) => sum + s.gpa, 0) / students.length).toFixed(2);
