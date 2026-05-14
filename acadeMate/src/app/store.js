@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-// Import slice reducers (we will create these in Steps 2–4)
+import { setupListeners } from "@reduxjs/toolkit/query";
 import { studentsApi } from "../features/students/studentsApi";
 import { coursesApi } from "../features/courses/coursesApi";
 import { gradesApi } from "../features/grades/gradesApi";
+import { loggerMiddleware } from "./middleware/logger";
 
 export const store = configureStore({
     reducer: {
@@ -14,9 +15,9 @@ export const store = configureStore({
         getDefaultMiddleware().concat(
             studentsApi.middleware,
             coursesApi.middleware,
-            gradesApi.middleware
+            gradesApi.middleware,
+            loggerMiddleware
         ),
-    // ↑ configureStore internally calls combineReducers({ students, courses, grades })
-    // ↑ redux-thunk middleware is included automatically
-    // ↑ Redux DevTools is configured automatically in development mode
 });
+
+setupListeners(store.dispatch);

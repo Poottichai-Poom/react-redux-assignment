@@ -23,7 +23,11 @@ function StudentRow({ student, index, onEditStudent, onDeleteStudent }) {
 }
 
 function StudentTable({ onEditStudent, onDeleteStudent }) {
-    const { data: students = [], isLoading } = useGetStudentsQuery();
+    const { data: students = [], isLoading } = useGetStudentsQuery(undefined, {
+        pollingInterval: 30000,
+        refetchOnFocus: true,
+        refetchOnReconnect: true,
+    });
 
     if (isLoading) return <p className="empty-state">Loading students...</p>;
 

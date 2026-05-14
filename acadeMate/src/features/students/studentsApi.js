@@ -31,6 +31,13 @@ export const studentsApi = createApi({
                 body: student,
             }),
             invalidatesTags: (result, error, { id }) => [{ type: 'Student', id }],
+            async onQueryStarted(student, { queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch (error) {
+                    console.error('updateStudent failed:', error.error ?? error);
+                }
+            },
         }),
         deleteStudent: builder.mutation({
             query: (id) => ({
